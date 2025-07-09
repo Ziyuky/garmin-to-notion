@@ -213,7 +213,7 @@ def create_activity(client, database_id, activity):
     client.pages.create(**page)
     
 def update_activity(client, existing_activity, new_activity):
-
+    print(f"Updating activity: {existing_activity}")
     # Update an existing activity in the Notion database with new data
     activity_name = new_activity.get('activityName', 'Unnamed Activity')
     activity_type, activity_subtype = format_activity_type(
@@ -268,9 +268,16 @@ def main():
     
     # Get all activities
     activities = get_all_activities(garmin)
+    
+    # Check if activities were retrieved successfully
+    if not activities:
+        print("No activities found or error retrieving activities")
+        return
 
     # Process all activities
     for activity in activities:
+        if not isinstance(activity, dict):
+            continue
         activity_date = activity.get('startTimeGMT')
         activity_name = format_entertainment(activity.get('activityName', 'Unnamed Activity'))
         activity_type, activity_subtype = format_activity_type(
