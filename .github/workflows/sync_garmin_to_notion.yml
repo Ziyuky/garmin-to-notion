@@ -2,10 +2,8 @@ name: Sync Garmin to Notion
 
 on:
   schedule:
-    # This cron job will run every 15 minutes from 6 AM to 11 PM Eastern Time
-    # - cron: '*/10 10-23 * * *'  # Every 15 minutes from 10:00 to 23:45 UTC 
-    # - cron: '*/10 0-3 * * *'    # Every 15 minutes from 00:00 to 03:45 UTC
-    - cron: '0 1 * * *' # Daily
+    # Run twice daily at 4 AM and 4 PM Eastern Time (9 AM and 9 PM UTC)
+    - cron: '0 9,21 * * *'
   workflow_dispatch:
 env:
   TZ: 'America/Montreal'
@@ -34,7 +32,7 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
 
-      - name: Run script
+      - name: Run Garmin Activities Sync
         env:
           GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
           GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
@@ -44,8 +42,16 @@ jobs:
           NOTION_STEPS_DB_ID: ${{ secrets.NOTION_STEPS_DB_ID }}
           NOTION_SLEEP_DB_ID: ${{ secrets.NOTION_SLEEP_DB_ID }}
           TZ: 'America/Montreal'
-        run: |
-          python garmin-activities.py
-          python personal-records.py
-          python daily-steps.py
-          python sleep-data.py
+        run: python garmin-activities.py
+
+      - name: Run Daily Steps Sync
+        env:
+          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          NOTION_PR_DB_ID: ${{ secrets.NOTION_PR_DB_ID }}
+          NOTION_STEPS_DB_ID: ${{ secrets.NOTION_STEPS_DB_ID }}
+          NOTION_WELLNESS_DB_ID: ${{ secrets.NOTION_WELLNESS_DB_ID }}
+          TZ: 'America/Montreal'
+        run: python daily-steps.py
