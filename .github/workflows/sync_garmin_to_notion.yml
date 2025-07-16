@@ -2,8 +2,8 @@ name: Sync Garmin to Notion
 
 on:
   schedule:
-    # Run twice daily at 4 AM and 4 PM Eastern Time (9 AM and 9 PM UTC)
-    - cron: '0 9,21 * * *'
+    # Run twice daily at 9 AM and 9 PM Eastern Time (2 AM and 2 PM UTC)
+    - cron: '0 2,14 * * *'
   workflow_dispatch:
 env:
   TZ: 'America/Montreal'
