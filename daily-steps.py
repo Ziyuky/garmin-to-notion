@@ -7,7 +7,7 @@ import time
 
 def get_all_daily_steps(garmin, retry_count=0):
     """Get last x days of daily step count data from Garmin Connect."""
-    startdate = date.today() - timedelta(days=30)
+    startdate = date.today() - timedelta(days=7)
     daterange = [startdate + timedelta(days=x) for x in range((date.today() - startdate).days + 1)]
     daily_steps = []
     for d in daterange:

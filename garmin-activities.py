@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import date, timedelta
 from garminconnect import Garmin
 from notion_client import Client
 from dotenv import load_dotenv
 import pytz
 import os
+import time
 
 # Your local time zone, replace with the appropriate one if needed
 local_tz = pytz.timezone('America/Toronto')
@@ -30,8 +31,20 @@ ACTIVITY_ICONS = {
     # Add more mappings as needed
 }
 
-def get_all_activities(garmin, limit=1000):
-    return garmin.get_activities(0, limit)
+def get_all_activities(garmin):
+    """Get last x days of daily step count data from Garmin Connect."""
+    startdate = date.today() - timedelta(days=7)
+    daterange = [startdate + timedelta(days=x) for x in range((date.today() - startdate).days + 1)]
+    activities = []
+    for d in daterange:
+        try:
+            activity = garmin.get_activities_by_date(d.isoformat(), d.isoformat())
+            activities += activity
+            time.sleep(0.5)
+        except Exception as e:
+                print(f"Skipping activity for {d} due to error")
+    return activities
+
 
 def format_activity_type(activity_type, activity_name=""):
     # First format the activity type as before
